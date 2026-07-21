@@ -1,0 +1,100 @@
+"use client"
+
+import * as React from "react"
+import { ChartConfig, ChartContainer, ChartLegend, ChartLegendContent, ChartTooltip, ChartTooltipContent } from "./ui/chart"
+import { Label, Pie , PieChart} from "recharts"
+
+const chartData = [
+  { browser: "chrome", visitors: 275, fill: "var(--color-chrome)" },
+  { browser: "safari", visitors: 200, fill: "var(--color-safari)" },
+  { browser: "firefox", visitors: 287, fill: "var(--color-firefox)" },
+  { browser: "edge", visitors: 173, fill: "var(--color-edge)" },
+  { browser: "other", visitors: 190, fill: "var(--color-other)" },
+]
+
+const chartConfig = {
+  visitors: {
+    label: "Visitors",
+  },
+  chrome: {
+    label: "Chrome",
+    color: "#d58e65",
+  },
+  safari: {
+    label: "Safari",
+    color: "#e8b45e",
+  },
+  firefox: {
+    label: "Firefox",
+    color: "#b74915",
+  },
+  edge: {
+    label: "Edge",
+    color: "#103f3d",
+  },
+  other: {
+    label: "Other",
+    color: "#c9c1b1",
+  },
+} satisfies ChartConfig
+
+const AppPieChart = () => {
+    const totalVisitors = React.useMemo(() => {
+    return chartData.reduce((acc, curr) => acc + curr.visitors, 0)
+  }, [])
+    return(
+        <div>
+            <ChartContainer
+                config={chartConfig}
+                className="mx-auto aspect-square max-h-[280px]"
+            >
+                <PieChart>
+                    <ChartTooltip
+                        cursor={false}
+                        content={<ChartTooltipContent hideLabel />}
+                    />
+                    <ChartLegend content={<ChartLegendContent />} />
+                    <Pie
+                        data={chartData}
+                        dataKey="visitors"
+                        nameKey="browser"
+                        innerRadius={60}
+                        strokeWidth={5}
+                    >
+                        <Label
+                            content={({ viewBox }) => {
+                                if (viewBox && "cx" in viewBox && "cy" in viewBox) {
+                                    return (
+                                        <text
+                                            x={viewBox.cx}
+                                            y={viewBox.cy}
+                                            textAnchor="middle"
+                                            dominantBaseline="middle"
+                                        >
+                            <tspan
+                                x={viewBox.cx}
+                                y={viewBox.cy}
+                                className="fill-foreground text-3xl font-bold"
+                            >
+                                {totalVisitors.toLocaleString()}
+                            </tspan>
+                            <tspan
+                                x={viewBox.cx}
+                                y={(viewBox.cy || 0) + 24}
+                                className="fill-muted-foreground"
+                            >
+                                Visitors
+                            </tspan>
+                            </text>
+                                )
+                                }
+                        }}
+                        />
+                    </Pie>
+                </PieChart>
+            </ChartContainer>
+        </div>
+    )
+}
+
+export { AppPieChart }
