@@ -2,6 +2,7 @@ import {AppBarChart} from "@/components/AppBarChart"
 import ChartAreaGradient from "@/components/ArealChart"
 import {AppPieChart} from "@/components/AppPieChart"
 import { CardList } from "@/components/CardList"
+import { TodoList } from "@/components/TodoList"
 
 export default function Home(){
   return (
@@ -15,7 +16,7 @@ export default function Home(){
         <h1 className="text-lg font-medium mb-4">Pie Chart</h1>
         <AppPieChart />
       </div>
-      <div className="bg-primary-foreground p-4 rounded-lg ">test</div>
+      <div className="bg-primary-foreground p-4 rounded-lg "><TodoList /></div>
       <div className="bg-primary-foreground p-4 rounded-lg lg:col-span-2 xl:col-span-1 2xl:col-span-2">
         <h1 className="text-lg font-medium mb-4">Area Chart</h1>
         <ChartAreaGradient />

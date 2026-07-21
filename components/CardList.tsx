@@ -97,17 +97,20 @@ const CardList = ({title}:{title: string}) => {
             <h1 className="text-lg font-medium mb-6">{title}</h1>
             <div className = "flex flex-col gap-2">
                 {list.map((item) => (
-                    <Card key={item.id} className="flex-row items-center justify-between gap-4 p-4">
-                        <div className="w-12 h-12 rounded-sm relative overflow-hidden">
-                            <Image src={item.image} alt={item.title} fill className="object-cover"/>
+                    <Card key={item.id} className="flex-row items-center gap-4 p-4 transition-all duration-200 hover:shadow-md hover:border-primary/30 hover:-translate-y-0.5 cursor-pointer">
+                        <div className="relative h-12 w-12 shrink-0 overflow-hidden rounded-lg border bg-muted">
+                            <Image src={item.image} alt={item.title} width={48} height={48} className="object-cover transition-transform duration-300 hover:scale-105"/>
                         </div>
                         <CardContent className="flex-1 p-0">
-                            <CardTitle className="text-sm">{item.title}</CardTitle>
-                            <Badge variant="secondary" className="mt-2">
+                            <CardTitle className="text-sm font-semibold tracking-tight">{item.title}</CardTitle>
+                            <Badge variant="outline"
+    className="mt-1 rounded-full px-2 py-0">
                                 {item.badge}
                             </Badge>
                         </CardContent>
-                        <CardFooter className="p-0 text-sm font-normal">{item.count/1000}K</CardFooter>
+                        <CardFooter className="p-0 text-sm">{Intl.NumberFormat("en", {
+    notation: "compact",
+}).format(item.count)}</CardFooter>
                     </Card>
                 ))}
             </div>

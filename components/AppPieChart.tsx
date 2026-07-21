@@ -18,23 +18,23 @@ const chartConfig = {
   },
   chrome: {
     label: "Chrome",
-    color: "#d58e65",
+    color: "var(--chart-1)",
   },
   safari: {
     label: "Safari",
-    color: "#e8b45e",
+    color: "var(--chart-2)",
   },
   firefox: {
     label: "Firefox",
-    color: "#b74915",
+    color: "var(--chart-3)",
   },
   edge: {
     label: "Edge",
-    color: "#103f3d",
+    color: "var(--chart-4)",
   },
   other: {
     label: "Other",
-    color: "#c9c1b1",
+    color: "var(--chart-5)",
   },
 } satisfies ChartConfig
 
