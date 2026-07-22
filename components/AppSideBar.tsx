@@ -1,4 +1,4 @@
-import {Home, Inbox, Calendar, Settings, Search, User, ChevronUp, User2, Plus, Projector} from "lucide-react"
+import {Home, Inbox, Calendar, Settings, Search, User, ChevronUp, User2, Plus, Projector, CreditCard} from "lucide-react"
 import Link from "next/link"
 import Image from "next/image"
 import { Sidebar, SidebarContent, SidebarHeader,SidebarFooter, SidebarGroupLabel, SidebarGroup, SidebarGroupContent, SidebarMenuItem, SidebarMenuButton, SidebarMenu, SidebarSeparator, SidebarGroupAction } from "./ui/sidebar"
@@ -30,6 +30,11 @@ const AppSideBar = () => {
             title: "Settings",
             url: "#",
             icon: Settings,
+        },
+        {
+            title: "Payments",
+            url: "/payments",
+            icon: CreditCard,
         },
         {
             title:"Search",
