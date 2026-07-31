@@ -11,7 +11,7 @@ export default function Home(){
         <h1 className="text-lg font-medium mb-4">Total Revenue</h1>
         <AppBarChart />
       </div>
-      <div className="bg-primary-foreground p-4 rounded-lg "><CardList title="popular content" /></div>
+      <div className="bg-primary-foreground p-4 rounded-lg "><CardList title="Popular Products" /></div>
       <div className="bg-primary-foreground p-4 rounded-lg ">
         <h1 className="text-lg font-medium mb-4">Pie Chart</h1>
         <AppPieChart />
