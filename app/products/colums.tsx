@@ -52,10 +52,17 @@ export const columns: ColumnDef<Product>[] = [
     header: "Image",
     cell: ({ row }) => {
       const product = row.original;
+      const firstColor = product.colors[0];
+      const imageSrc = firstColor ? product.images[firstColor] : undefined;
+
+      if (!imageSrc) {
+        return <div className="w-9 h-9 rounded-full bg-muted" />;
+      }
+
       return (
         <div className="w-9 h-9 relative">
           <Image
-            src={product.images[product.colors[0]]}
+            src={imageSrc}
             alt={product.name}
             fill
             className="rounded-full object-cover"
