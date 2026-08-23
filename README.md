@@ -1,6 +1,6 @@
 # Admin Dashboard
 
-Welcome to the Admin dashboard for the e-commerce UI project. This admin app is built with Next.js 16, React 19, Tailwind CSS, shadcn/ui, and charting components to manage products, users, payments, and analytics.
+Welcome to the Admin dashboard for the e-commerce UI project. This admin app is built with Next.js 16, React 19, Tailwind CSS, shadcn/ui, and charting components to manage products, users, payments, and analytics. It is the admin dashboard for the e-commerce Micro-service, monorepo full-stack app. 
 
 ## Features
 
