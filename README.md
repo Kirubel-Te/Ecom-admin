@@ -31,7 +31,7 @@ pnpm install
 pnpm dev
 ```
 
-Open `http://localhost:3000` in your browser to view the admin dashboard.
+Open `http://localhost:3003` in your browser to view the admin dashboard.
 
 ## Build
 
