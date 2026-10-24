@@ -6,6 +6,7 @@ import { AppSideBar } from "@/components/AppSideBar";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
 import { SidebarProvider } from "@/components/ui/sidebar";
 import { cookies } from "next/dist/server/request/cookies";
+import { ClerkProvider } from "@clerk/nextjs";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -42,11 +43,12 @@ export default async function RootLayout({
   const defaultOpen = cookieStore.get("sidebar-open")?.value === "true"
 
   return (
-    <html
-      lang="en" suppressHydrationWarning
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
-    >
-      <body className={`${geist.className} min-h-full flex flex-col`}>
+    <ClerkProvider>
+      <html
+        lang="en" suppressHydrationWarning
+        className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      >
+        <body className={`${geist.className} min-h-full flex flex-col`}>
         <ThemeProvider
             attribute="class"
             defaultTheme="system"
@@ -63,5 +65,6 @@ export default async function RootLayout({
         </ThemeProvider>  
       </body>
     </html>
+    </ClerkProvider>
   );
 }
