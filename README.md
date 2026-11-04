@@ -78,8 +78,6 @@ pnpm lint
 
 ## Notes
 
-- The app uses mock data in the page components for development.
-- You can extend the pages and table components to connect to a real API.
 - `next.config.ts` allows remote images from `images.pexels.com`.
 
 ## Contact
