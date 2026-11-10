@@ -12,23 +12,24 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { ProductType } from "@repo/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
-export type Product = {
-  id: string | number;
-  price: number;
-  name: string;
-  shortDescription: string;
-  description: string;
-  sizes: string[];
-  colors: string[];
-  images: Record<string, string>;
-};
+// export type Product = {
+//   id: string | number;
+//   price: number;
+//   name: string;
+//   shortDescription: string;
+//   description: string;
+//   sizes: string[];
+//   colors: string[];
+//   images: Record<string, string>;
+// };
 
-export const columns: ColumnDef<Product>[] = [
+export const columns: ColumnDef<ProductType>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -53,7 +54,9 @@ export const columns: ColumnDef<Product>[] = [
     cell: ({ row }) => {
       const product = row.original;
       const firstColor = product.colors[0];
-      const imageSrc = firstColor ? product.images[firstColor] : undefined;
+      const imageSrc = firstColor
+        ? (product.images as Record<string, string>)[firstColor]
+        : undefined;
 
       if (!imageSrc) {
         return <div className="w-9 h-9 rounded-full bg-muted" />;
@@ -118,7 +121,7 @@ export const columns: ColumnDef<Product>[] = [
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
               <DropdownMenuItem>
-                <Link href={`/products/${product.id}`}>View customer</Link>
+                <Link href={`/products/${product.id}`}>View product</Link>
               </DropdownMenuItem>
             </DropdownMenuGroup>
           </DropdownMenuContent>
