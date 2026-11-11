@@ -12,18 +12,19 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { cn } from "@/lib/utils";
+import { OrderType } from "@repo/types";
 import { ColumnDef } from "@tanstack/react-table";
 import { ArrowUpDown, MoreHorizontal } from "lucide-react";
 
-export type Payment = {
-  id: string;
-  amount: number;
-  username: string;
-  email: string;
-  status: "pending" | "processing" | "success" | "failed";
-};
+// export type Payment = {
+//   id: string;
+//   amount: number;
+//   username: string;
+//   email: string;
+//   status: "pending" | "processing" | "success" | "failed";
+// };
 
-export const columns: ColumnDef<Payment>[] = [
+export const columns: ColumnDef<OrderType>[] = [
   {
     id: "select",
     header: ({ table }) => (
@@ -107,7 +108,7 @@ export const columns: ColumnDef<Payment>[] = [
             <DropdownMenuGroup>
               <DropdownMenuLabel>Actions</DropdownMenuLabel>
               <DropdownMenuItem
-                onClick={() => navigator.clipboard.writeText(payment.id)}
+                onClick={() => navigator.clipboard.writeText(payment._id)}
               >
                 Copy payment ID
               </DropdownMenuItem>
