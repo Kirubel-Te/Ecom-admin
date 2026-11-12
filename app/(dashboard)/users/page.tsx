@@ -2,7 +2,7 @@ import { columns } from "./columns";
 import { type User , auth } from "@clerk/nextjs/server";
 import { DataTable } from "./data-table";
 
-const getData = async (): Promise<data:User[],totalCount:number> => {
+const getData = async (): Promise<{ data: User[]; totalCount: number }> => {
   // return [
   //   {
   //     id: "728ed521",
@@ -280,7 +280,7 @@ const UsersPage = async () => {
       <div className="mb-8 px-4 py-2 bg-secondary rounded-md">
         <h1 className="font-semibold">All Users</h1>
       </div>
-      <DataTable columns={columns} data={data} />
+      <DataTable columns={columns} data={data.data} />
     </div>
   );
 };
