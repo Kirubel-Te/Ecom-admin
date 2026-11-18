@@ -30,72 +30,71 @@ import { Button } from "./ui/button";
 import { Textarea } from "./ui/textarea";
 import { Checkbox } from "./ui/checkbox";
 import { ScrollArea } from "./ui/scroll-area";
+import { useMutation } from "@tanstack/react-query";
+import { useAuth } from "@clerk/nextjs";
+import { useQuery } from "@tanstack/react-query";
+import { CategoryType, colors, ProductFormSchema, sizes } from "@repo/types";
+import { toast } from "react-toastify";
 
-const categories = [
-  "T-shirts",
-  "Shoes",
-  "Accessories",
-  "Bags",
-  "Dresses",
-  "Jackets",
-  "Gloves",
-] as const;
+const fetchCategories = async (): Promise<CategoryType[]> => {
+  const res = await fetch(
+    `${process.env.NEXT_PUBLIC_PRODUCT_SERVICE_URL}/category`
+  );
 
-const colors = [
-  "blue",
-  "green",
-  "red",
-  "yellow",
-  "purple",
-  "orange",
-  "pink",
-  "brown",
-  "gray",
-  "black",
-  "white",
-] as const;
+  if (!res.ok) {
+    throw new Error("Failed to fetch categories!");
+  }
 
-const sizes = [
-  "xs",
-  "s",
-  "m",
-  "l",
-  "xl",
-  "xxl",
-  "34",
-  "35",
-  "36",
-  "37",
-  "38",
-  "39",
-  "40",
-  "41",
-  "42",
-  "43",
-  "44",
-  "45",
-  "46",
-  "47",
-  "48",
-] as const;
-
-const formSchema = z.object({
-  name: z.string().min(1, { message: "Product name is required!" }),
-  shortDescription: z
-    .string()
-    .min(1, { message: "Short description is required!" })
-    .max(60),
-  description: z.string().min(1, { message: "Description is required!" }),
-  price: z.number().min(1, { message: "Price is required!" }),
-  category: z.enum(categories),
-  sizes: z.array(z.enum(sizes)),
-  colors: z.array(z.enum(colors)),
-  images: z.record(z.enum(colors), z.string()),
-});
+  return res.json();
+};
 
 const AddProduct = () => {
-  const form = useForm<z.infer<typeof formSchema>>({
-    resolver: zodResolver(formSchema as any),
+  const form = useForm<z.infer<typeof ProductFormSchema>>({
+    resolver: zodResolver(ProductFormSchema),
+    defaultValues: {
+      name: "",
+      shortDescription: "",
+      description: "",
+      price: 0,
+      categorySlug: "",
+      sizes: [],
+      colors: [],
+      images: {},
+    },
+  });
+
+  const { isPending, error, data } = useQuery({
+    queryKey: ["categories"],
+    queryFn: fetchCategories,
+  });
+
+  const { getToken } = useAuth();
+
+  const mutation = useMutation({
+    mutationFn: async (data: z.infer<typeof ProductFormSchema>) => {
+      const token = await getToken();
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_PRODUCT_SERVICE_URL}/product`,
+        {
+          method: "POST",
+          body: JSON.stringify(data),
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      if (!res.ok) {
+        throw new Error("Failed to create product!");
+      }
+    },
+    onSuccess: () => {
+      toast.success("Product created successfully");
+      form.reset();
+    },
+    onError: (error) => {
+      toast.error(error.message);
+    },
   });
   return (
     <SheetContent>
@@ -107,7 +106,10 @@ const AddProduct = () => {
           </SheetDescription>
         </SheetHeader>
         <Form {...form}>
-          <form className="space-y-8 p-6">
+          <form
+            className="space-y-8 p-6"
+            onSubmit={form.handleSubmit((data) => mutation.mutate(data))}
+          >
             <FormField
               control={form.control}
               name="name"
@@ -163,7 +165,13 @@ const AddProduct = () => {
                 <FormItem>
                   <FormLabel>Price</FormLabel>
                   <FormControl>
-                    <Input type="number" {...field} />
+                    <Input
+                      type="number"
+                      {...field}
+                      onChange={(event) =>
+                        field.onChange(event.target.valueAsNumber)
+                      }
+                    />
                   </FormControl>
                   <FormDescription>
                     Enter the price of the product.
@@ -174,19 +182,31 @@ const AddProduct = () => {
             />
             <FormField
               control={form.control}
-              name="category"
+              name="categorySlug"
               render={({ field }) => (
                 <FormItem>
                   <FormLabel>Category</FormLabel>
                   <FormControl>
-                    <Select>
+                    <Select
+                      value={field.value}
+                      onValueChange={(value) => field.onChange(value ?? "")}
+                    >
                       <SelectTrigger>
-                        <SelectValue placeholder="Select a category" />
+                        <SelectValue
+                          placeholder={
+                            isPending
+                              ? "Loading categories..."
+                              : "Select a category"
+                          }
+                        />
                       </SelectTrigger>
                       <SelectContent>
-                        {categories.map((cat) => (
-                          <SelectItem key={cat} value={cat}>
-                            {cat}
+                        {data?.map((category) => (
+                          <SelectItem
+                            key={category.slug}
+                            value={category.slug}
+                          >
+                            {category.name}
                           </SelectItem>
                         ))}
                       </SelectContent>
@@ -195,6 +215,11 @@ const AddProduct = () => {
                   <FormDescription>
                     Enter the category of the product.
                   </FormDescription>
+                  {error && (
+                    <p role="alert" className="text-sm text-destructive">
+                      Failed to load categories: {error.message}
+                    </p>
+                  )}
                   <FormMessage />
                 </FormItem>
               )}
@@ -210,7 +235,7 @@ const AddProduct = () => {
                       {sizes.map((size) => (
                         <div className="flex items-center gap-2" key={size}>
                           <Checkbox
-                            id="size"
+                            id={`size-${size}`}
                             checked={field.value?.includes(size)}
                             onCheckedChange={(checked) => {
                               const currentValues = field.value || [];
@@ -223,7 +248,7 @@ const AddProduct = () => {
                               }
                             }}
                           />
-                          <label htmlFor="size" className="text-xs">
+                          <label htmlFor={`size-${size}`} className="text-xs">
                             {size}
                           </label>
                         </div>
@@ -252,7 +277,7 @@ const AddProduct = () => {
                             key={color}
                           >
                             <Checkbox
-                              id="color"
+                              id={`color-${color}`}
                               checked={field.value?.includes(color)}
                               onCheckedChange={(checked) => {
                                 const currentValues = field.value || [];
@@ -266,7 +291,7 @@ const AddProduct = () => {
                               }}
                             />
                             <label
-                              htmlFor="color"
+                              htmlFor={`color-${color}`}
                               className="text-xs flex items-center gap-2"
                             >
                               <div
@@ -280,7 +305,9 @@ const AddProduct = () => {
                       </div>
                       {field.value && field.value.length > 0 && (
                         <div className="mt-8 space-y-4">
-                          <p className="text-sm font-medium">Upload images for selected colors:</p>
+                          <p className="text-sm font-medium">
+                            Enter an image URL for each selected color:
+                          </p>
                           {field.value.map((color) => (
                             <div className="flex items-center gap-2" key={color}>
                               <div
@@ -288,7 +315,22 @@ const AddProduct = () => {
                                 style={{ backgroundColor: color }}
                               />
                               <span className="text-sm min-w-[60px]">{color}</span>
-                              <Input type="file" accept="image/*" />
+                              <FormField
+                                control={form.control}
+                                name={`images.${color}`}
+                                render={({ field: imageField }) => (
+                                  <Input
+                                    type="url"
+                                    placeholder="https://..."
+                                    value={imageField.value ?? ""}
+                                    onChange={imageField.onChange}
+                                    onBlur={imageField.onBlur}
+                                    name={imageField.name}
+                                    ref={imageField.ref}
+                                    aria-label={`${color} image URL`}
+                                  />
+                                )}
+                              />
                             </div>
                           ))}
                         </div>
@@ -302,7 +344,9 @@ const AddProduct = () => {
                 </FormItem>
               )}
             />
-            <Button type="submit">Submit</Button>
+            <Button type="submit" disabled={mutation.isPending} className = "disabled:cursor-not-allowed disabled:opacity-50">
+              {mutation.isPending ? "Submitting..." : "Submit"}
+            </Button>
           </form>
         </Form>
       </ScrollArea>
